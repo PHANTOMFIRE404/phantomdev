@@ -1,74 +1,61 @@
-/* Basic Spotify-inspired dark theme */
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Inter', 'Poppins', sans-serif;
-}
-
 body {
-  background: #0d0d0d;
-  color: #fff;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+    background-color: #1a1a1a;
+    color: white;
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
 }
 
-/* Glowing green highlight */
-h1 {
-  font-size: 2.5rem;
-  color: #1db954;
-  text-shadow: 0 0 10px #1db95480;
-  margin-bottom: 20px;
+.timer-container {
+    text-align: center;
 }
 
-/* Message text */
-#msg {
-  font-size: 1.2rem;
-  color: #ccc;
-  transition: color 0.3s ease, transform 0.3s ease;
+.timer {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 20px;
 }
 
-/* Hover or animated glow */
-#msg:hover {
-  color: #1db954;
-  transform: scale(1.05);
+.time-display {
+    font-size: 2em;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
-/* Simple animated background pulse */
-@keyframes pulse {
-  0% { background-color: #0d0d0d; }
-  50% { background-color: #111; }
-  100% { background-color: #0d0d0d; }
+.progress-ring {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
 }
 
-body {
-  animation: pulse 6s infinite;
+.progress-ring__circle {
+    transition: 0.35s stroke-dashoffset;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+    stroke-dasharray: 326.72;
+    stroke-dashoffset: 0;
 }
 
-/* Button example */
-button {
-  background: #1db954;
-  border: none;
-  color: white;
-  padding: 10px 18px;
-  font-size: 1rem;
-  border-radius: 25px;
-  cursor: pointer;
-  margin-top: 15px;
-  transition: background 0.3s ease, transform 0.3s ease;
+.controls button {
+    background-color: transparent;
+    border: 2px solid white;
+    color: white;
+    padding: 10px 20px;
+    margin: 0 10px;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
-button:hover {
-  background: #19a348;
-  transform: scale(1.05);
-}
-
-/* Responsive design */
-@media (max-width: 600px) {
-  h1 { font-size: 2rem; }
-  #msg { font-size: 1rem; }
+.controls button:hover {
+    background-color: white;
+    color: #1a1a1a;
 }
