@@ -1,13 +1,88 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Phantom Music</title>
-    <link rel="stylesheet" href="/static/style.css">
-  </head>
-  <body>
-    <h1>🎵 Phantom Music</h1>
-    <p id="msg">Loading...</p>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro Timer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="timer-container">
+        <div class="timer">
+            <div class="time-display">25:00</div>
+            <div class="progress-ring">
+                <svg>
+                    <circle class="progress-ring__circle" stroke="white" stroke-width="4" fill="transparent" r="52" cx="60" cy="60"/>
+                </svg>
+            </div>
+        </div>
+        <div class="controls">
+            <button id="start">Start</button>
+            <button id="pause">Pause</button>
+            <button id="reset">Reset</button>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        const socket = io();
 
-    <script src="/static/script.js"></script>
-  </body>
+        const timeDisplay = document.querySelector('.time-display');
+        const progressRing = document.querySelector('.progress-ring__circle');
+        const startButton = document.getElementById('start');
+        const pauseButton = document.getElementById('pause');
+        const resetButton = document.getElementById('reset');
+
+        let timer;
+        let timeLeft = 1500; // 25 minutes in seconds
+
+        const updateDisplay = () => {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timeDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            const circumference = 2 * Math.PI * 52;
+            const offset = circumference - (timeLeft / 1500) * circumference;
+            progressRing.style.strokeDashoffset = offset;
+        };
+
+        const startTimer = () => {
+            socket.emit('start_timer', { duration: timeLeft });
+        };
+
+        const pauseTimer = () => {
+            socket.emit('pause_timer');
+        };
+
+        const resetTimer = () => {
+            socket.emit('reset_timer');
+        };
+
+        socket.on('timer_started', (data) => {
+            clearInterval(timer);
+            timeLeft = data.duration;
+            timer = setInterval(() => {
+                timeLeft--;
+                updateDisplay();
+                if (timeLeft === 0) {
+                    clearInterval(timer);
+                }
+            }, 1000);
+        });
+
+        socket.on('timer_paused', () => {
+            clearInterval(timer);
+        });
+
+        socket.on('timer_reset', () => {
+            clearInterval(timer);
+            timeLeft = 1500;
+            updateDisplay();
+        });
+
+        startButton.addEventListener('click', startTimer);
+        pauseButton.addEventListener('click', pauseTimer);
+        resetButton.addEventListener('click', resetTimer);
+
+        updateDisplay();
+    </script>
+</body>
 </html>
