@@ -1,14 +1,33 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template
+from flask_socketio import SocketIO
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!'
+socketio = SocketIO(app)
 
-@app.route("/")
-def home():
-    return render_template("index.html")
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-@app.route("/api/hello")
-def hello():
-    return jsonify({"message": "Hello from the backend!"})
+@socketio.on('connect')
+def test_connect():
+    print('Client connected')
 
-if __name__ == "__main__":
-    app.run()
+@socketio.on('disconnect')
+def test_disconnect():
+    print('Client disconnected')
+
+@socketio.on('start_timer')
+def start_timer(data):
+    socketio.emit('timer_started', data)
+
+@socketio.on('pause_timer')
+def pause_timer():
+    socketio.emit('timer_paused')
+
+@socketio.on('reset_timer')
+def reset_timer():
+    socketio.emit('timer_reset')
+
+if __name__ == '__main__':
+    socketio.run(app)
